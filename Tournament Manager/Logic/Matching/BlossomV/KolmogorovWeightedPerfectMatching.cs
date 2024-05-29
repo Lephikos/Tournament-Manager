@@ -11,8 +11,9 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
     internal class KolmogorovWeightedPerfectMatching<V, E> : IMatchingAlgorithm<V, E>
     {
 
-        private static readonly bool DEBUG = true;
+        #region member
 
+        private static readonly bool DEBUG = true;
 
         public static readonly int INFINITY = int.MaxValue;
 
@@ -20,6 +21,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
 
         private static readonly string NO_PERFECT_MATCHING = "There is no perfect matching in the specified graph";
 
+        private static readonly BlossomVOptions DEFAULT_OPTIONS = new BlossomVOptions();
 
         internal readonly IGraph<V, E> initialGraph;
 
@@ -35,11 +37,17 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
 
         private DualSolution<V, E> dualSolution;
 
+        private BlossomVOptions options;
+
+        private ObjectiveSense objectiveSense;
+
+        #endregion member
+
+        #region constructor
 
 
 
-
-
+        #endregion constructor
 
 
 
