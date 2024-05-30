@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tournament_Manager.Logic.Matching.BlossomV.Interfaces;
+using Tournament_Manager.Logic.Graph.cs;
 
 namespace Tournament_Manager.Logic.Matching.BlossomV
 {
