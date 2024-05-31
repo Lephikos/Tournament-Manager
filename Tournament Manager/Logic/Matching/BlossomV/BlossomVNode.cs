@@ -338,7 +338,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
             if (isTreeRoot)
             {
                 treeSiblingPrev.treeSiblingNext = treeSiblingNext;
-                if ()
+                
             }
         }
 

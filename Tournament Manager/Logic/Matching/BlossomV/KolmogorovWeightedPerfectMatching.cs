@@ -9,7 +9,7 @@ using Tournament_Manager.Logic.Graph.cs;
 
 namespace Tournament_Manager.Logic.Matching.BlossomV
 {
-    internal class KolmogorovWeightedPerfectMatching<V, E> : IMatchingAlgorithm<V, E> where E : notnull
+    internal class KolmogorovWeightedPerfectMatching<V, E> : IMatchingAlgorithm<V, E> where E : notnull where V : notnull
     {
 
         #region member
@@ -154,8 +154,16 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
             double error = TestNonNegativity();
             HashSet<E> matchedEdges = matching!.GetEdges();
 
-            for (int i = 0; i < state.graphEdges.Count; i++)
+            for (int i = 0; i < state!.graphEdges.Count; i++)
             {
+                E graphEdge = state.graphEdges[i];
+                BlossomVEdge edge = state.edges[i];
+
+                double slack = graph.GetEdgeWeight(graphEdge);
+                slack -= state.minEdgeWeight;
+                
+                
+
 
             }
 
@@ -178,10 +186,207 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
 
         private double TestNonNegativity()
         {
-
+            return 0.0;
         }
 
         #endregion private methods
+
+        #region classes
+
+        /// <summary>
+        /// A solution to the dual linear program formulated on the <c>graph</c>
+        /// </summary>
+        /// <typeparam name="W">the graph vertex type</typeparam>
+        /// <typeparam name="F">the graph edge type</typeparam>
+        public class DualSolution<W, F> where W : notnull
+        {
+
+            /// <summary>
+            /// The graph on which both primal and dual linear programs are formulated
+            /// </summary>
+            internal IGraph<W, F> graph;
+
+            /// <summary>
+            /// Mapping from sets of vertices of odd cardinality to their dual variables. Represents a
+            /// solution to the dual linear program
+            /// </summary>
+            internal Dictionary<W, double> dualVariables;
+
+            /// <summary>
+            /// Constructs a new solution for the dual linear program
+            /// </summary>
+            /// <param name="graph">the graph on which the linear program is formulated</param>
+            /// <param name="dualVariables">the mapping from sets of vertices of odd cardinality to their dual variables</param>
+            public DualSolution(IGraph<W, F> graph, Dictionary<W, double> dualVariables)
+            {
+                this.graph = graph;
+                this.dualVariables = dualVariables;
+            }
+
+
+            /// <summary>
+            /// returns the graph on which the linear program is formulated
+            /// </summary>
+            /// <returns>the graph on which the linear program is formulated</returns>
+            public IGraph<W, F> GetGraph()
+            {
+                return graph;
+            }
+
+            /// <summary>
+            /// The mapping from sets of vertices of odd cardinality to their dual variables, which
+            /// represents a solution to the dual linear program
+            /// </summary>
+            /// <returns>the mapping from sets of vertices of odd cardinality to their dual variables</returns>
+            public Dictionary<W, double> GetDualVariables()
+            {
+                return dualVariables;
+            }
+
+
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder("DualSolution{");
+                sb.Append("graph=").Append(graph);
+                sb.Append(", dualVariables=").Append(dualVariables);
+                sb.Append('}');
+
+                return sb.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Describes the performance characteristics of the algorithm and numeric data about the number
+        /// of performed dual operations during the main phase of the algorithm
+        /// </summary>
+        public class Statistics
+        {
+
+            /// <summary>
+            /// Number of shrink operations
+            /// </summary>
+            internal int shrinkNum;
+
+            /// <summary>
+            /// Number of expand operations
+            /// </summary>
+            internal int expandNum;
+
+            /// <summary>
+            /// Number of grow operations
+            /// </summary>
+            internal int growNum;
+
+            /// <summary>
+            /// Time spent during the augment operation in nanoseconds
+            /// </summary>
+            internal long augmentTime = 0;
+
+            /// <summary>
+            /// Time spent during the expand operation in nanoseconds
+            /// </summary>
+            internal long expandTime = 0;
+
+            /// <summary>
+            /// Time spent during the shrink operation in nanoseconds
+            /// </summary>
+            internal long shrinkTime = 0;
+
+            /// <summary>
+            /// Time spent during the grow operation in nanoseconds
+            /// </summary>
+            internal long growTime = 0;
+
+            /// <summary>
+            /// Time spent during the dual update phase (either single tree or global) in nanoseconds
+            /// </summary>
+            internal long dualUpdatesTime = 0;
+
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns>the number of shrink operations</returns>
+            public int GetShrinkNum()
+            {
+                return shrinkNum;
+            }
+
+            /// <summary>
+            /// the number of expand operations
+            /// </summary>
+            /// <returns></returns>
+            public int GetExpandNum()
+            {
+                return expandNum;
+            }
+
+            /// <summary>
+            /// the number of grow operations
+            /// </summary>
+            /// <returns></returns>
+            public int GetGrowNum()
+            {
+                return growNum;
+            }
+
+            /// <summary>
+            /// the time spent during the augment operation in nanoseconds
+            /// </summary>
+            /// <returns></returns>
+            public long GetAugmentTime()
+            {
+                return augmentTime;
+            }
+
+            /// <summary>
+            /// the time spent during the expand operation in nanoseconds
+            /// </summary>
+            /// <returns></returns>
+            public long GetExpandTime()
+            {
+                return expandTime;
+            }
+
+            /// <summary>
+            /// the time spent during the shrink operation in nanoseconds
+            /// </summary>
+            /// <returns></returns>
+            public long GetShrinkTime()
+            {
+                return shrinkTime;
+            }
+
+            /// <summary>
+            /// the time spent during the grow operation in nanoseconds
+            /// </summary>
+            /// <returns></returns>
+            public long GetGrowTime()
+            {
+                return growTime;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns>the time spent during the dual update phase (either single tree or global) in nanoseconds</returns>
+            public long GetDualUpdatesTime()
+            {
+                return dualUpdatesTime;
+            }
+
+
+            public override string ToString()
+            {
+                return "Statistics{shrinkNum=" + shrinkNum + ", expandNum=" + expandNum + ", growNum="
+                + growNum + ", augmentTime=" + augmentTime + ", expandTime=" + expandTime
+                + ", shrinkTime=" + shrinkTime + ", growTime=" + growTime + '}';
+            }
+
+        }
+
+        #endregion
+
 
     }
 }

@@ -17,7 +17,7 @@ namespace Tournament_Manager.Data.InMemoryDBs
         /// <summary>
         /// In-Memory player database
         /// </summary>
-        private readonly Dictionary<int, Player> players = new Dictionary<int, Player>();
+        private readonly Dictionary<Guid, Player> players = new Dictionary<Guid, Player>();
 
         
         public PlayerDB GetInstance()
@@ -32,21 +32,24 @@ namespace Tournament_Manager.Data.InMemoryDBs
 
         public bool AddPlayer(Player player)
         {
-            if (players.ContainsKey(player.id))
+            if (players.ContainsKey(player.guid))
             {
                 return false;
             }
 
-            players.Add(player.id, player);
+            players.Add(player.guid, player);
             return true;
         }
 
         public void RemovePlayer(Player player)
         {
-            players.Remove(player.id);
+            players.Remove(player.guid);
         }
 
-        public Boolean UpdatePlayer(int id, )
+        public Boolean UpdatePlayer(int guid)
+        {
+            return true;
+        }
 
 
 

@@ -9,7 +9,7 @@ namespace Tournament_Manager
     internal class Player
     {
 
-        public Guid Guid = Guid.NewGuid();
+        public Guid guid = Guid.NewGuid();
 
         /// <summary>
         /// Displayed player name

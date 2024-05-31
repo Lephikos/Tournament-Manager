@@ -23,12 +23,12 @@ namespace Tournament_Manager
 
             List<long> possibleByes = GetByeCandidates();
 
-            ChooseBye();
+            //ChooseBye();
 
 
-            GetGroups();
-            CreateGraph();
-            SolveGraph();
+            //GetGroups();
+            //CreateGraph();
+            //SolveGraph();
 
 
 
