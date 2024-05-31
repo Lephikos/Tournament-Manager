@@ -11,7 +11,7 @@ namespace Tournament_Manager.Logic.Graph.cs
     {
 
         protected AbstractGraph() { }
-
+         
 
 
         public abstract HashSet<E> GetAllEdges(V sourceVertex, V targetVertex);
