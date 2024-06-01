@@ -8,5 +8,8 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
 {
     internal class BlossomVTree
     {
+
+
+        internal double eps;
     }
 }

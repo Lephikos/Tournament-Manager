@@ -201,7 +201,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
         /// Position of this node in the array <see cref="BlossomVState.nodes"/>. This helps
         /// to determine generic counterpart of this node in constant time.
         /// </summary>
-        int pos;
+        internal int pos;
 
 
 
@@ -342,5 +342,35 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
             }
         }
 
+
+
+
+
+        /// <summary>
+        /// Checks whether this node is a plus node
+        /// </summary>
+        /// <returns>true if the label of this node is <see cref="Label.PLUS"/>, false otherwise</returns>
+        public bool IsPlusNode()
+        {
+            return label == Label.PLUS;
+        }
+
+        /// <summary>
+        /// Checks whether this node is a plus node
+        /// </summary>
+        /// <returns>true if the label of this node is <see cref="Label.MINUS"/>, false otherwise</returns>
+        public bool IsMinusNode()
+        {
+            return label == Label.MINUS;
+        }
+
+        /// <summary>
+        /// Checks whether this node is a plus node
+        /// </summary>
+        /// <returns>true if the label of this node is <see cref="Label.INFINITY"/>, false otherwise</returns>
+        public bool IsInifinityNode()
+        {
+            return label == Label.INFINITY;
+        }
     }
 }
