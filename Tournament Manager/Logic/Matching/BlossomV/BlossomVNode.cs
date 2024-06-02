@@ -12,6 +12,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
 using System.Xml.Linq;
+using Tournament_Manager.Logic.Heap;
 using static System.Windows.Forms.Design.AxImporter;
 using static System.Windows.Forms.LinkLabel;
 
@@ -63,13 +64,12 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
     internal class BlossomVNode
     {
 
+        #region member
 
-        public enum Label
-        {
-            PLUS,
-            MINUS,
-            INFINITY
-        }
+        /// <summary>
+        /// Node from the heap this node is stored in
+        /// </summary>
+        internal IHandle<Double, BlossomVNode>? handle;
 
         /// <summary>
         /// True if this node is a tree root, implies that this node is outer and isn't matched.
@@ -122,7 +122,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
         /// Current dual variable of this node. If the node belongs to a tree and is an outer
         /// node, then this value may not be valid.
         /// </summary>
-        internal int dual;
+        internal double dual;
 
         /// <summary>
         /// An edge which is incident to this node and currently belongs to the matching.
@@ -203,7 +203,9 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
         /// </summary>
         internal int pos;
 
+        #endregion member
 
+        #region constructor
 
         /// <summary>
         /// Constructs a new "+" node with a <see cref="Label.PLUS"/> label.
@@ -216,7 +218,9 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
             this.pos = pos;
         }
 
+        #endregion constructor
 
+        #region public methods
 
         /// <summary>
         /// Insert the <c>edge</c> into linked list of incident edges of this node in
@@ -231,10 +235,10 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
                 first[dir] = edge.next[dir] = edge.prev[dir] = edge;
             } else
             {
-                edge.prev[dir] = first[dir].prev[dir];
-                edge.next[dir] = first[dir];
-                first[dir].prev[dir].next[dir] = edge;
-                first[dir].prev[dir] = edge;
+                edge.prev[dir] = first[dir]!.prev[dir];
+                edge.next[dir] = first[dir]!;
+                first[dir]!.prev[dir].next[dir] = edge;
+                first[dir]!.prev[dir] = edge;
             }
 
             // this constraint is used to maintain the following feature: if an edge has direction
@@ -272,7 +276,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
         public BlossomVNode? GetTreeGrandparent()
         {
             BlossomVNode? t = parentEdge?.GetOpposite(this);
-            return t?.parentEdge?.GetOpposite(this);
+            return t?.parentEdge?.GetOpposite(t);
         }
 
         /// <summary>
@@ -337,13 +341,157 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
         {
             if (isTreeRoot)
             {
-                treeSiblingPrev.treeSiblingNext = treeSiblingNext;
-                
+                treeSiblingPrev!.treeSiblingNext = treeSiblingNext;
+                if (treeSiblingNext != null)
+                {
+                    treeSiblingNext.treeSiblingPrev = treeSiblingPrev;
+                }
+            } else
+            {
+                if (treeSiblingPrev!.treeSiblingNext == null)
+                {
+                    // this vertex is the first child => we have to update parent.firstTreeChild
+                    parentEdge!.GetOpposite(this)!.firstTreeChild = treeSiblingNext; 
+                } else
+                {
+                    // this vertex isn't the first child
+                    treeSiblingPrev.treeSiblingNext = treeSiblingNext;
+                }
+
+                if (treeSiblingNext == null)
+                {
+                    // this vertex is the last child => we have to set treeSiblingPrev of the firstChild
+                    if (parentEdge!.GetOpposite(this)!.firstTreeChild != null)
+                    {
+                        parentEdge.GetOpposite(this)!.firstTreeChild!.treeSiblingPrev = treeSiblingPrev;
+                    }
+                } else
+                {
+                    // this vertex isn't the last child
+                    treeSiblingNext.treeSiblingPrev = treeSiblingPrev;
+                }
             }
         }
 
+        /// <summary>
+        /// Appends the child list of this node to the beginning of the child list of the <c>blossom</c>
+        /// </summary>
+        /// <param name="blossom">the node to which the children of the current node are moved</param>
+        public void MoveChildrenTo(BlossomVNode blossom)
+        {
+            if (firstTreeChild != null)
+            {
+                if (blossom.firstTreeChild == null)
+                {
+                    blossom.firstTreeChild = firstTreeChild;
+                } else
+                {
+                    BlossomVNode t = blossom.firstTreeChild.treeSiblingPrev!;
 
+                    // concatenating child lists
+                    firstTreeChild.treeSiblingPrev!.treeSiblingNext = blossom.firstTreeChild;
+                    blossom.firstTreeChild.treeSiblingPrev = firstTreeChild.treeSiblingPrev;
 
+                    // setting reference to the last child and updating firstTreeChild reference of the
+                    // blossom
+                    firstTreeChild.treeSiblingPrev = t;
+                    blossom.firstTreeChild = firstTreeChild;
+                }
+                firstTreeChild = null; // now this node has no children
+            }
+        }
+
+        /// <summary>
+        /// Computes and returns the penultimate blossom of this node, i.e. the blossom which isn't outer
+        /// but whose blossomParent is outer. This method also applies path compression technique to the
+        /// blossomGrandparent references. More precisely, it finds the penultimate blossom of this node
+        /// and changes blossomGrandparent references of the previous nodes to point to the resulting
+        /// penultimate blossom.
+        /// </summary>
+        /// <returns>the penultimate blossom of this node</returns>
+        public BlossomVNode GetPenultimateBlossom()
+        {
+            BlossomVNode current = this;
+
+            while(true)
+            {
+                if (!current.blossomGrandparent!.isOuter)
+                {
+                    current = current.blossomGrandparent;
+                } else if (current.blossomGrandparent != current.blossomParent)
+                {
+                    // this is the case when current.blossomGrandparent has been removed
+                    current.blossomGrandparent = current.blossomParent;
+                } else
+                {
+                    break;
+                }
+            }
+
+            //Current references the penultimate blossom we were looking for. Now we change
+            //blossomParent references to point to current
+
+            BlossomVNode prev = this;
+            BlossomVNode next;
+
+            while (prev != current)
+            {
+                next = prev.blossomGrandparent!;
+                prev.blossomGrandparent = current; //apply path compression
+                prev = next;
+            }
+
+            return current;
+        }
+
+        /// <summary>
+        /// Computes and returns the penultimate blossom of this node. The return value of this method
+        /// always equals to the value returned by {@link BlossomVNode#getPenultimateBlossom()}. However,
+        /// the main difference is that this method changes the blossomGrandparent references to point to
+        /// the node that is previous to the resulting penultimate blossom. This method is used during
+        /// the expand operation.
+        /// </summary>
+        /// <returns>the penultimate blossom of this node</returns>
+        public BlossomVNode GetPenultimateBlossomAndFixBlossomGrandparent()
+        {
+            BlossomVNode current = this;
+            BlossomVNode? prev = null;
+            while (true)
+            {
+                if (!current.blossomGrandparent!.isOuter)
+                {
+                    prev = current;
+                    current = current.blossomGrandparent;
+                }
+                else if (current.blossomGrandparent != current.blossomParent)
+                {
+                    // this is the case when current.blossomGrandparent has been removed
+                    current.blossomGrandparent = current.blossomParent;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            /*
+             * Now current node is the penultimate blossom, prev.blossomParent == current. All the
+             * nodes, that are lower than prev, must have blossomGrandparent referencing a node, that is
+             * not higher than prev
+             */
+            if (prev != null)
+            {
+                BlossomVNode prevNode = this;
+                BlossomVNode nextNode;
+                while (prevNode != prev)
+                {
+                    nextNode = prevNode.blossomGrandparent!;
+                    prevNode.blossomGrandparent = prev;
+                    prevNode = nextNode;
+                }
+            }
+
+            return current;
+        }
 
 
         /// <summary>
@@ -372,5 +520,179 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
         {
             return label == Label.INFINITY;
         }
+
+        /// <summary>
+        /// Returns the true dual variable of this node. If this node is outer and belongs to some tree
+        /// then it is subject to the lazy delta spreading technique. Otherwise, its dual is valid.
+        /// </summary>
+        /// <returns>the actual dual variable of this node</returns>
+        public double GetTrueDual()
+        {
+            if (IsInifinityNode() || !isOuter)
+            {
+                return dual;
+            }
+
+            return IsPlusNode() ? dual + tree!.eps : dual - tree!.eps;
+        }
+
+        /// <summary>
+        /// Returns an iterator over all incident edges of this node
+        /// </summary>
+        /// <returns>a new instance of IncidentEdgeIterator for this node</returns>
+        public IncidentEdgeEnumerator GetIncidentEdgeEnumerator()
+        {
+            return new IncidentEdgeEnumerator(this.first!);
+        }
+
+        public override string ToString()
+        {
+            return "BlossomVNode pos = " + pos + ", dual: " + dual + ", true dual: " + GetTrueDual()
+            + ", label: " + label + (isMarked ? ", marked" : "")
+            + (isProcessed ? ", processed" : "")
+            + (blossomParent == null || isOuter ? "" : ", blossomParent = " + blossomParent.pos)
+            + (matched == null ? "" : ", matched = " + matched);
+        }
+
+        #endregion public methods
+
+        #region classes
+
+        /// <summary>
+        /// Represents nodes' labels
+        /// </summary>
+        public enum Label
+        {
+            /// <summary>
+            /// The node is on an even layer in the tree (root has layer 0)
+            /// </summary>
+            PLUS,
+
+            /// <summary>
+            /// The node is on an odd layer in the tree (root has layer 0)
+            /// </summary>
+            MINUS,
+
+            /// <summary>
+            /// This node doesn't belong to any tree and is matched to some other node
+            /// </summary>
+            INFINITY
+        }
+
+        /// <summary>
+        /// An iterator for traversing the edges incident to this node.<para/>
+        /// 
+        /// This iterator has a feature that during every step it knows the next edge it'll return to the
+        /// caller. That's why it is safe to modify the current edge (move it to another node, for example).
+        /// </summary>
+        public class IncidentEdgeEnumerator : IEnumerator<BlossomVEdge>
+        {
+
+            /// <summary>
+            /// The direction of the current edge
+            /// </summary>
+            private int currentDir;
+
+            /// <summary>
+            /// Direction of the <c>nextEdge</c>
+            /// </summary>
+            private int nextDir;
+
+            /// <summary>
+            /// Current Edge
+            /// </summary>
+            private BlossomVEdge? currentEdge;
+
+            /// <summary>
+            /// The edge that will be returned after the next call to <see cref="MoveNext"/>.
+            /// Is null if all incident edges of the current node have been traversed.
+            /// </summary>
+            private BlossomVEdge? nextEdge;
+
+            private readonly BlossomVEdge[] first;
+
+
+            /// <summary>
+            /// Constructs a new instance of the IncidentEdgeIterator.
+            /// </summary>
+            /// <param name="first"></param>
+            public IncidentEdgeEnumerator(BlossomVEdge[] first)
+            {
+                this.first = first;
+                nextDir = first[0] == null ? 1 : 0;
+                nextEdge = first[nextDir];
+            }
+
+
+            /// <summary>
+            /// Returns the direction of the edge returned by this iterator
+            /// </summary>
+            /// <returns>the direction of the edge returned by this iterator</returns>
+            public int GetDir()
+            {
+                return currentDir;
+            }
+
+            public bool MoveNext()
+            {
+                currentEdge = nextEdge;
+                Advance();
+
+                return currentEdge != null;
+            }
+
+            /// <summary>
+            /// Advances this iterator to the next incident edge. If previous edge was the last one with
+            /// direction 0, then the direction of this iterator changes. If previous edge was the last
+            /// incident edge, then <c>currentEdge</c> becomes null.
+            /// </summary>
+            private void Advance()
+            {
+
+                if (nextEdge == null)
+                {
+                    return;
+                }
+
+                currentDir = nextDir;
+                nextEdge = nextEdge.next[nextDir];
+
+                if (nextEdge == first[0])
+                {
+                    nextEdge = first[1];
+                    nextDir = 1;
+                } else if (nextEdge == first[1])
+                {
+                    nextEdge = null;
+                }
+            }
+
+
+            public void Reset()
+            {
+                throw new NotSupportedException();
+            }
+
+            void IDisposable.Dispose() { GC.SuppressFinalize(this); }
+
+            public BlossomVEdge Current
+            {
+                get
+                {
+                    return currentEdge ?? new BlossomVEdge(-1);
+                }
+            }
+
+            object System.Collections.IEnumerator.Current
+            {
+                get { return Current; }
+            }
+
+        }
+
+
+        #endregion classes
+
+
     }
 }

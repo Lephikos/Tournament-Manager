@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
+using Tournament_Manager.Logic.Heap;
 
 namespace Tournament_Manager.Logic.Matching.BlossomV
 {
@@ -39,6 +40,16 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
     {
 
         #region member
+
+        /// <summary>
+        /// A heap node from the heap this edge is stored in.<para/>
+        /// 
+        /// <em>This variable doesn't need to be necessarily set to <c>null</c> after the edge is
+        /// removed from the heap it was stored in due to performance reasons. Therefore, no assumptions
+        /// should be made about whether this edge belongs to some heap or not based upon this variable
+        /// being <c>null</c> or not.</em>
+        /// </summary>
+        internal IHandle<Double, BlossomVEdge>? handle;
 
         /// <summary>
         /// Position of this edge in the array <see cref="BlossomVState{V, E}.edges"/>. This helps to determine generic
@@ -278,7 +289,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
 
             public bool MoveNext()
             {
-                if (!initialized)
+                if (!initialized && currentNode != null)
                 {
                     initialized = true;
                     return true;
