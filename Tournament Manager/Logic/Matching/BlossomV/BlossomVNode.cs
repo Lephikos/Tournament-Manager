@@ -690,7 +690,6 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
 
         }
 
-
         #endregion classes
 
 
