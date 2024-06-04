@@ -239,7 +239,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
         /// Ensures correct addition of an edge to the heap
         /// </summary>
         /// <param name="edge">a (+, inf) edge</param>
-        public void AddPlusInifinityEdge(BlossomVEdge edge)
+        public void AddPlusInfinityEdge(BlossomVEdge edge)
         {
             edge.handle = plusInfinityEdges.Insert(edge.slack, edge);
         }

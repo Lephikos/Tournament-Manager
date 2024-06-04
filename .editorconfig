@@ -4,3 +4,4 @@
 dotnet_diagnostic.CA1816.severity = suggestion
 
 dotnet_diagnostic.IDE0290.severity = none
+dotnet_analyzer_diagnostic.category-Style.severity = none

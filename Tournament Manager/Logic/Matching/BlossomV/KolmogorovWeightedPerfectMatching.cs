@@ -14,7 +14,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
 
         #region member
 
-        private static readonly bool DEBUG = true;
+        internal static readonly bool DEBUG = true;
 
         public static readonly double EPS = IMatchingAlgorithm<V, E>.DEFAULT_EPSILON;
 
