@@ -126,6 +126,18 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
 
         #region constructor
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public BlossomVTree()
+        {
+            this.root = new BlossomVNode(-1);
+            first = new BlossomVTreeEdge[2];
+            plusPlusEdges = new PairingHeap<Double, BlossomVEdge>();
+            plusInfinityEdges = new PairingHeap<Double, BlossomVEdge>();
+            minusBlossoms = new PairingHeap<Double, BlossomVNode>();
+        }
+
         public BlossomVTree(BlossomVNode root)
         {
             this.root = root;

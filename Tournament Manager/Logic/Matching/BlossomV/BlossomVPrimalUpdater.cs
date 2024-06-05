@@ -125,7 +125,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
             long start = GetNanoTime();
 
             int initialTreeNum = state.treeNum;
-            int dirToMinusNode = growEdge.head[0].IsInifinityNode() ? 0 : 1;
+            int dirToMinusNode = growEdge.head[0].IsInfinityNode() ? 0 : 1;
 
             BlossomVNode nodeInTheTree = growEdge.head[1 - dirToMinusNode];
             BlossomVNode minusNode = growEdge.head[dirToMinusNode];
@@ -567,7 +567,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
                         }
                         opposite.tree.currentEdge!.AddToCurrentPlusMinusHeap(edge, opposite.tree.currentDirection);
                     }
-                } else if (opposite.IsInifinityNode())
+                } else if (opposite.IsInfinityNode())
                 {
                     node.tree.AddPlusInfinityEdge(edge);
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tournament_Manager.Logic.Graph.cs;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Tournament_Manager.Logic.Matching
 {
@@ -26,7 +27,7 @@ namespace Tournament_Manager.Logic.Matching
         /// Returns the weight of the matching.
         /// </summary>
         /// <returns>the weight of the matching</returns>
-        public int GetWeight();
+        public double GetWeight();
 
         /// <summary>
         /// Get the edges of the matching.
@@ -53,6 +54,78 @@ namespace Tournament_Manager.Logic.Matching
         public bool IsPerfect()
         {
             return GetEdges().Count == GetGraph().VertexSet().Count / 2.0;
+        }
+
+    }
+
+    internal class MatchingImpl<V, E> : IMatching<V, E>
+    {
+
+        /// <summary>
+        /// graph on which the matching is defined
+        /// </summary>
+        private IGraph<V, E> graph;
+
+        /// <summary>
+        /// the edges of the matching
+        /// </summary>
+        private HashSet<E> edges;
+
+        /// <summary>
+        /// the weight of the matching
+        /// </summary>
+        private double weight;
+
+        private HashSet<V>? matchedVertices = null;
+
+
+        /// <summary>
+        /// Construct a new instance
+        /// </summary>
+        /// <param name="graph">graph on which the matching is defined</param>
+        /// <param name="edges">the edges of the matching</param>
+        /// <param name="weight"></param>
+        public MatchingImpl(IGraph<V, E> graph, HashSet<E> edges, double weight)
+        {
+            this.graph = graph;
+            this.edges = edges;
+            this.weight = weight;
+        }
+
+
+        public IGraph<V, E> GetGraph()
+        {
+            return graph;
+        }
+
+        public double GetWeight()
+        {
+            return weight;
+        }
+
+        public HashSet<E> GetEdges()
+        {
+            return edges;
+        }
+
+        public bool IsMatched(V v)
+        {
+            if (matchedVertices == null)
+            { // lazily index the vertices that have been matched
+                matchedVertices = new HashSet<V>();
+                foreach (E e in edges)
+                {
+                    matchedVertices.Add(graph.GetEdgeSource(e));
+                    matchedVertices.Add(graph.GetEdgeTarget(e));
+                }
+            }
+
+            return matchedVertices.Contains(v);
+        }
+
+        public override string ToString()
+        {
+            return "Matching [edges=" + edges + ", weight=" + weight + "]";
         }
 
     }

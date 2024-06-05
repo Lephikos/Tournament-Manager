@@ -516,7 +516,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
         /// Checks whether this node is a plus node
         /// </summary>
         /// <returns>true if the label of this node is <see cref="Label.INFINITY"/>, false otherwise</returns>
-        public bool IsInifinityNode()
+        public bool IsInfinityNode()
         {
             return label == Label.INFINITY;
         }
@@ -528,7 +528,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
         /// <returns>the actual dual variable of this node</returns>
         public double GetTrueDual()
         {
-            if (IsInifinityNode() || !isOuter)
+            if (IsInfinityNode() || !isOuter)
             {
                 return dual;
             }
