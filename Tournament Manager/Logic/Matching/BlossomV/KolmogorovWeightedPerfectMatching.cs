@@ -18,7 +18,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
 
         #region member
 
-        internal static readonly bool DEBUG = true;
+        internal static readonly bool DEBUG = false;
 
         public static readonly double EPS = IMatchingAlgorithm<V, E>.DEFAULT_EPSILON;
 
@@ -537,6 +537,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
 
             HashSet<E> edges = new HashSet<E>();
             BlossomVNode[] nodes = state!.nodes;
+            
             List<BlossomVNode> processed = new List<BlossomVNode>();
 
             for (int i = 0; i < state.nodeNum; i++)
@@ -545,7 +546,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
                 {
                     BlossomVNode? blossomPrev = null;
                     BlossomVNode blossom = nodes[i];
-
+                    
                     // traverse the path from unmatched node to the first unprocessed pseudonode
                     do
                     {

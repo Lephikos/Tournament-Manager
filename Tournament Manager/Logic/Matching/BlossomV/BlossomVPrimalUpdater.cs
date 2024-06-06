@@ -1030,6 +1030,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
                         ShrinkMinusNode(blossomNode, blossom);
                     }
                 }
+                blossomNode.blossomGrandparent = blossomNode.blossomParent = blossom;
             }
 
             // substitute varNode with the blossom in the tree structure
