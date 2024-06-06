@@ -181,7 +181,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
                 BlossomVNode a = edge.headOriginal[0];
                 BlossomVNode b = edge.headOriginal[1];
 
-                Pair<BlossomVNode, BlossomVNode> lca = new (a, b);
+                Pair<BlossomVNode, BlossomVNode> lca = Lca(a, b);
                 slack -= TotalDual(a, lca.GetFirst());
                 slack -= TotalDual(b, lca.GetSecond());
 
@@ -408,7 +408,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
         /// <param name="start">the node to start from</param>
         /// <param name="end">the node to end with</param>
         /// <returns>the sum = start.dual + start.blossomParent.dual + ... + end.dual</returns>
-        private double TotalDual(BlossomVNode start, BlossomVNode end)
+        private static double TotalDual(BlossomVNode start, BlossomVNode end)
         {
             if (end == start)
             {
@@ -437,7 +437,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
         /// <param name="a">a vertex whose lca is to be found with respect to another vertex</param>
         /// <param name="b">the other vertex whose lca is to be found</param>
         /// <returns>either an lca blossom of <c>a</c> and <c>b</c> or their outermost blossoms</returns>
-        private Pair<BlossomVNode, BlossomVNode> lca(BlossomVNode a, BlossomVNode b)
+        private static Pair<BlossomVNode, BlossomVNode> Lca(BlossomVNode a, BlossomVNode b)
         {
             BlossomVNode[] branches = new BlossomVNode[] { a, b };
             int dir = 0;
@@ -484,7 +484,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
         /// is encountered
         /// </summary>
         /// <param name="node">the node to start from</param>
-        private void ClearMarked(BlossomVNode? node)
+        private static void ClearMarked(BlossomVNode? node)
         {
             do
             {
@@ -864,7 +864,7 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
             /// represents a solution to the dual linear program
             /// </summary>
             /// <returns>the mapping from sets of vertices of odd cardinality to their dual variables</returns>
-            public Dictionary<W, double> GetDualVariables()
+            public Dictionary<HashSet<W>, double> GetDualVariables()
             {
                 return dualVariables;
             }

@@ -21,7 +21,7 @@ namespace Tournament_Manager.Logic.Graph.cs
         /// <param name="sourceVertex">source vertex of the edge.</param>
         /// <param name="targetVertex">target vertex of the edge.</param>
         /// <returns>a set of all edges connecting source vertex to target vertex.</returns>
-        public HashSet<E> GetAllEdges(V sourceVertex,  V targetVertex);
+        public HashSet<E>? GetAllEdges(V sourceVertex,  V targetVertex);
 
         /// <summary>
         /// Returns an edge connecting source vertex to target vertex if such vertices and such edge
@@ -34,7 +34,7 @@ namespace Tournament_Manager.Logic.Graph.cs
         /// <param name="sourceVertex">source vertex of the edge.</param>
         /// <param name="targetVertex">target vertex of the edge.</param>
         /// <returns>an edge connecting source vertex to target vertex.</returns>
-        public E GetEdge(V sourceVertex, V targetVertex);
+        public E? GetEdge(V sourceVertex, V targetVertex);
 
         /// <summary>
         /// Creates a new edge in this graph, going from the source vertex to the target vertex, and
@@ -48,14 +48,26 @@ namespace Tournament_Manager.Logic.Graph.cs
         /// <param name="sourceVertex">source vertex of the edge.</param>
         /// <param name="targetVertex">target vertex of the edge.</param>
         /// <returns>The newly created edge if added to the graph, otherwise <c>null</c></returns>
-        public E AddEdge(V sourceVertex, V targetVertex);
+        public E? AddEdge(V sourceVertex, V targetVertex);
 
         /// <summary>
         /// Creates a new vertex in this graph and returns it.
         /// </summary>
         /// <returns>The newly created vertex if added to the graph.</returns>
-        public V AddVertex();
+        public V? AddVertex();
 
+
+        /// <summary>
+        /// Adds the specified vertex to this graph if not already present. More formally, adds the
+        /// specified vertex, <c>v</c>, to this graph if this graph contains no vertex
+        /// <c>u</c> such that <c>
+        /// u.equals(v)</c>. If this graph already contains such vertex, the call leaves this graph
+        /// unchanged and returns <c>false</c>>. In combination with the restriction on
+        /// constructors, this ensures that graphs never contain duplicate vertices.
+        /// </summary>
+        /// <param name="v">vertex to be added to this graph.</param>
+        /// <returns><c>true</c> if this graph did not already contain the specified vertex.</returns>
+        public bool AddVertex(V v);
 
         /// <summary>
         /// Returns <c>true</c> if and only if this graph contains an edge going from the source
@@ -190,7 +202,7 @@ namespace Tournament_Manager.Logic.Graph.cs
         /// <param name="sourceVertex">source vertex of the edge.</param>
         /// <param name="targetVertex">target vertex of the edge.</param>
         /// <returns>The removed edge, or <c>null</c> if no edge removed.</returns>
-        public E RemoveEdge(V sourceVertex, V targetVertex);
+        public E? RemoveEdge(V sourceVertex, V targetVertex);
 
         /// <summary>
         /// Removes all the edges in this graph that are also contained in the specified edge collection.
@@ -228,7 +240,7 @@ namespace Tournament_Manager.Logic.Graph.cs
         /// the call removes all edges that touch <c>u</c> and then removes <c>u</c> itself.
         /// If no such <c>u</c> is found, the call leaves the graph unchanged.
         /// Returns <c>true</c> if the graph contained the specified vertex.
-        /// (The graph will not contain the specified vertex once the call returns).ypara/>
+        /// (The graph will not contain the specified vertex once the call returns).<para/>
         /// 
         /// If the specified vertex is <c>null</c> returns <c>false</c>.
         /// </summary>
@@ -292,7 +304,7 @@ namespace Tournament_Manager.Logic.Graph.cs
         /// <param name="weight">new weight for edge</param>
         public void SetEdgeWeight(V sourceVertex, V targetVertex,  double weight)
         {
-            this.SetEdgeWeight(this.GetEdge(sourceVertex, targetVertex), weight);
+            this.SetEdgeWeight(this.GetEdge(sourceVertex, targetVertex)!, weight);
         }
 
     }

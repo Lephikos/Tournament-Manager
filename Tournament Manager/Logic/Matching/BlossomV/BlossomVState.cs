@@ -18,9 +18,9 @@ namespace Tournament_Manager.Logic.Matching.BlossomV
     /// </summary>
     /// <typeparam name="V">the graph vertex type</typeparam>
     /// <typeparam name="E">the graph edge type</typeparam>
-    internal class BlossomVState<V, E>
+    internal class BlossomVState<V, E> where V : notnull where E : notnull
     {
-
+        
         /// <summary>
         /// Number of nodes in the graph
         /// </summary>

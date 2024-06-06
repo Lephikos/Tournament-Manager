@@ -18,7 +18,7 @@ namespace Tournament_Manager
             this.activePlayers = activePlayers;
         }
 
-        public List<Pair<long>> GeneratePairings()
+        public List<Pair<long>>? GeneratePairings()
         {
 
             List<long> possibleByes = GetByeCandidates();

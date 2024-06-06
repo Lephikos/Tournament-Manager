@@ -14,13 +14,15 @@ namespace Tournament_Manager.Logic.Graph.cs
          
 
 
-        public abstract HashSet<E> GetAllEdges(V sourceVertex, V targetVertex);
+        public abstract HashSet<E>? GetAllEdges(V sourceVertex, V targetVertex);
 
-        public abstract E GetEdge(V sourceVertex, V targetVertex);
+        public abstract E? GetEdge(V sourceVertex, V targetVertex);
 
-        public abstract E AddEdge(V sourceVertex, V targetVertex);
+        public abstract E? AddEdge(V sourceVertex, V targetVertex);
 
-        public abstract V AddVertex();
+        public abstract V? AddVertex();
+
+        public abstract bool AddVertex(V v);
 
 
         public bool ContainsEdge(V sourceVertex, V targetVertex)
@@ -52,7 +54,7 @@ namespace Tournament_Manager.Logic.Graph.cs
 
         public HashSet<E>? RemoveAllEdges(V sourceVertex, V targetVertex)
         {
-            HashSet<E> removed = GetAllEdges(sourceVertex, targetVertex);
+            HashSet<E>? removed = GetAllEdges(sourceVertex, targetVertex);
             if (removed == null)
             {
                 return null;
@@ -62,7 +64,7 @@ namespace Tournament_Manager.Logic.Graph.cs
             return removed;
         }
 
-        public abstract E RemoveEdge(V sourceVertex, V targetVertex);
+        public abstract E? RemoveEdge(V sourceVertex, V targetVertex);
 
         public bool RemoveAllEdges(HashSet<E> edges)
         {
