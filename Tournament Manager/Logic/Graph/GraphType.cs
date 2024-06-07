@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tournament_Manager.Logic.Graph.cs;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Tournament_Manager.Logic.Graph

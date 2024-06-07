@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tournament_Manager.Logic.Graph.cs
+namespace Tournament_Manager.Logic.Graph
 {
 
     /// <summary>
@@ -69,11 +69,11 @@ namespace Tournament_Manager.Logic.Graph.cs
         /// <param name="writeWeightsThrough">if set to true, the weights will get propagated to the backing graph
         ///                                   in the <see cref="SetEdgeWeight(E, double)"/> method</param>
         /// <exception cref="ArgumentException">
-        public AsWeightedGraph(IGraph<V, E> graph, Dictionary<E, double> weights, Boolean writeWeightsThrough) : base(graph)
+        public AsWeightedGraph(IGraph<V, E> graph, Dictionary<E, double> weights, bool writeWeightsThrough) : base(graph)
         {
             this.weights = weights;
-            this.weightFunction = null;
-            this.cacheWeights = false;
+            weightFunction = null;
+            cacheWeights = false;
             this.writeWeightsThrough = writeWeightsThrough;
 
             if (writeWeightsThrough && !graph.GetGraphType().IsWeighted())
@@ -105,7 +105,7 @@ namespace Tournament_Manager.Logic.Graph.cs
             this.weightFunction = weightFunction;
             this.cacheWeights = cacheWeights;
             this.writeWeightsThrough = writeWeightsThrough;
-            this.weights = new Dictionary<E, double>();
+            weights = new Dictionary<E, double>();
 
             if (writeWeightsThrough && !graph.GetGraphType().IsWeighted())
             {
@@ -134,11 +134,12 @@ namespace Tournament_Manager.Logic.Graph.cs
 
             if (weightFunction != null)
             {
-                if (!cacheWeights || (cacheWeights && !weights.TryGetValue(e, out weight)))
+                if (!cacheWeights || cacheWeights && !weights.TryGetValue(e, out weight))
                 {
                     weight = weightFunction(e);
                 }
-            } else
+            }
+            else
             {
                 weights.TryGetValue(e, out weight);
             }
@@ -165,9 +166,9 @@ namespace Tournament_Manager.Logic.Graph.cs
 
             weights[e] = weight;
 
-            if (this.writeWeightsThrough)
+            if (writeWeightsThrough)
             {
-                this.GetDelegate().SetEdgeWeight(e, weight);
+                GetDelegate().SetEdgeWeight(e, weight);
             }
         }
 

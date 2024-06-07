@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
 using Tournament_Manager.Data;
-using Tournament_Manager.Logic.Graph.cs;
+using Tournament_Manager.Logic.Graph;
 using Tournament_Manager.Logic.util;
 
 namespace Tournament_Manager.Logic.Matching.BlossomV

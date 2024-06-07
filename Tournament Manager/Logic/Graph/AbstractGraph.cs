@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tournament_Manager.Logic.Graph.cs
+namespace Tournament_Manager.Logic.Graph
 {
-    internal abstract class AbstractGraph<V, E > : IGraph<V, E>
+    internal abstract class AbstractGraph<V, E> : IGraph<V, E>
     {
 
         protected AbstractGraph() { }
-         
+
 
 
         public abstract HashSet<E>? GetAllEdges(V sourceVertex, V targetVertex);
@@ -126,11 +126,11 @@ namespace Tournament_Manager.Logic.Graph.cs
 
                 if (isDirected)
                 {
-                    pairing = ((pairing) * (pairing + 1) / 2) + target;
+                    pairing = pairing * (pairing + 1) / 2 + target;
                 }
 
-                part = (31 * part) + pairing;
-                part = (31 * part) + GetEdgeWeight(e).GetHashCode();
+                part = 31 * part + pairing;
+                part = 31 * part + GetEdgeWeight(e).GetHashCode();
 
                 hash += part;
             }
@@ -151,14 +151,15 @@ namespace Tournament_Manager.Logic.Graph.cs
             {
                 return true;
             }
-            if ((obj == null) || (obj.GetType() != this.GetType()))
+            if (obj == null || obj.GetType() != GetType())
             {
                 return false;
             }
 
-            IGraph<V, E> g = (IGraph<V, E>) obj;
+            IGraph<V, E> g = (IGraph<V, E>)obj;
 
-            if (!VertexSet().Equals(g.VertexSet()) || !EdgeSet().Equals(g.EdgeSet())) {
+            if (!VertexSet().Equals(g.VertexSet()) || !EdgeSet().Equals(g.EdgeSet()))
+            {
                 return false;
             }
 
@@ -179,15 +180,15 @@ namespace Tournament_Manager.Logic.Graph.cs
                 if (isDirected && (!gSource.Equals(source) || !gTarget.Equals(target)))
                 {
                     return false;
-                } 
-                else if (!isDirected && 
+                }
+                else if (!isDirected &&
                     (!gSource.Equals(source) || !gTarget.Equals(target)) &&
-                    ((!gSource.Equals(target) || !gTarget.Equals(source))))
+                    (!gSource.Equals(target) || !gTarget.Equals(source)))
                 {
                     return false;
                 }
 
-                if (this.GetEdgeWeight(e).CompareTo(g.GetEdgeWeight(e)) != 0)
+                if (GetEdgeWeight(e).CompareTo(g.GetEdgeWeight(e)) != 0)
                 {
                     return false;
                 }

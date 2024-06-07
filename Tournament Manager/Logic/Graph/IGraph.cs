@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tournament_Manager.Logic.Graph.cs
+namespace Tournament_Manager.Logic.Graph
 {
     internal interface IGraph<V, E>
     {
@@ -21,7 +21,7 @@ namespace Tournament_Manager.Logic.Graph.cs
         /// <param name="sourceVertex">source vertex of the edge.</param>
         /// <param name="targetVertex">target vertex of the edge.</param>
         /// <returns>a set of all edges connecting source vertex to target vertex.</returns>
-        public HashSet<E>? GetAllEdges(V sourceVertex,  V targetVertex);
+        public HashSet<E>? GetAllEdges(V sourceVertex, V targetVertex);
 
         /// <summary>
         /// Returns an edge connecting source vertex to target vertex if such vertices and such edge
@@ -302,9 +302,9 @@ namespace Tournament_Manager.Logic.Graph.cs
         /// <param name="sourceVertex">source vertex of the edge</param>
         /// <param name="targetVertex">target vertex of the edge</param>
         /// <param name="weight">new weight for edge</param>
-        public void SetEdgeWeight(V sourceVertex, V targetVertex,  double weight)
+        public void SetEdgeWeight(V sourceVertex, V targetVertex, double weight)
         {
-            this.SetEdgeWeight(this.GetEdge(sourceVertex, targetVertex)!, weight);
+            SetEdgeWeight(GetEdge(sourceVertex, targetVertex)!, weight);
         }
 
     }

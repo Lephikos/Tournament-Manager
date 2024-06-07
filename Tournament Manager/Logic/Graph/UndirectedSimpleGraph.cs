@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tournament_Manager.Logic.util;
 
-namespace Tournament_Manager.Logic.Graph.cs
+namespace Tournament_Manager.Logic.Graph
 {
 
     /// <summary>
@@ -40,8 +40,8 @@ namespace Tournament_Manager.Logic.Graph.cs
                 return null;
             }
 
-            return edges.Where(p => (p.GetFirst() == sourceVertex && p.GetSecond() == targetVertex)
-                                 || (p.GetFirst() == targetVertex && p.GetSecond() == sourceVertex)).ToHashSet<Pair<long, long>>();
+            return edges.Where(p => p.GetFirst() == sourceVertex && p.GetSecond() == targetVertex
+                                 || p.GetFirst() == targetVertex && p.GetSecond() == sourceVertex).ToHashSet();
         }
 
         public override Pair<long, long>? GetEdge(long sourceVertex, long targetVertex)
@@ -51,8 +51,8 @@ namespace Tournament_Manager.Logic.Graph.cs
                 return null;
             }
 
-            return edges.FirstOrDefault(p => (p.GetFirst() == sourceVertex && p.GetSecond() == targetVertex)
-                                          || (p.GetFirst() == targetVertex && p.GetSecond() == sourceVertex));
+            return edges.FirstOrDefault(p => p.GetFirst() == sourceVertex && p.GetSecond() == targetVertex
+                                          || p.GetFirst() == targetVertex && p.GetSecond() == sourceVertex);
         }
 
         public override Pair<long, long>? AddEdge(long sourceVertex, long targetVertex)
@@ -158,10 +158,11 @@ namespace Tournament_Manager.Logic.Graph.cs
 
             if (ContainsEdge(e))
             {
-                edges.RemoveWhere(edge => (edge.GetFirst() == e.GetFirst() && edge.GetSecond() == e.GetSecond())
-                                        || (edge.GetFirst() == e.GetSecond() && edge.GetSecond() == e.GetFirst()));
+                edges.RemoveWhere(edge => edge.GetFirst() == e.GetFirst() && edge.GetSecond() == e.GetSecond()
+                                        || edge.GetFirst() == e.GetSecond() && edge.GetSecond() == e.GetFirst());
                 return true;
-            } else
+            }
+            else
             {
                 return false;
             }
@@ -182,7 +183,8 @@ namespace Tournament_Manager.Logic.Graph.cs
 
                 return edge;
 
-            } else
+            }
+            else
             {
                 return null;
             }
@@ -226,7 +228,7 @@ namespace Tournament_Manager.Logic.Graph.cs
 
         public override void SetEdgeWeight(Pair<long, long> e, double weight)
         {
-            
+
         }
 
     }

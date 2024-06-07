@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using Tournament_Manager.Logic.Graph.cs;
 using System.Windows.Forms.VisualStyles;
+using Tournament_Manager.Logic.Graph;
 
 namespace Tournament_Manager.Logic.util
 {

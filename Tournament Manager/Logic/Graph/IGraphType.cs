@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tournament_Manager.Logic.Graph.cs
+namespace Tournament_Manager.Logic.Graph
 {
     internal interface IGraphType
     {

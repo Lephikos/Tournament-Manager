@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tournament_Manager.Data;
 
-namespace Tournament_Manager
+namespace Tournament_Manager.Logic
 {
     internal class PairingGenerator
     {

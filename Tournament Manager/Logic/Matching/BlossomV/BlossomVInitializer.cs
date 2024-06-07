@@ -7,7 +7,7 @@ using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
-using Tournament_Manager.Logic.Graph.cs;
+using Tournament_Manager.Logic.Graph;
 using Tournament_Manager.Logic.Heap;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
