@@ -4,41 +4,54 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tournament_Manager.Data;
+using Tournament_Manager.Logic.Graph;
+using Tournament_Manager.Logic.Matching;
+using Tournament_Manager.Logic.Matching.BlossomV;
+using Tournament_Manager.Logic.util;
 
 namespace Tournament_Manager.Logic
 {
     internal class PairingGenerator
     {
 
-        private List<TournamentPlayerData> activePlayers;
-
-
-        public PairingGenerator(List<TournamentPlayerData> activePlayers)
-        {
-            this.activePlayers = activePlayers;
-        }
-
-        public List<Pair<long>>? GeneratePairings()
+        public static List<Pair<TournamentPlayerData, TournamentPlayerData>> GeneratePairings(
+            List<TournamentPlayerData> activePlayers, Func<TournamentPlayerData, TournamentPlayerData, double> weightFunction)
         {
 
-            List<long> possibleByes = GetByeCandidates();
+            List<Pair<TournamentPlayerData, TournamentPlayerData>> result = new List<Pair<TournamentPlayerData, TournamentPlayerData>>();
+            List<long>? possibleByes = null;
 
-            //ChooseBye();
+            if (activePlayers.Count % 2 == 1)
+            {
+                possibleByes = GetByeCandidates(activePlayers);
+            }
 
+            IGraph<long, Pair<long, long>> graph = ConstructGraph(activePlayers, possibleByes, weightFunction);
 
-            //GetGroups();
-            //CreateGraph();
-            //SolveGraph();
+            KolmogorovWeightedPerfectMatching<long, Pair<long, long>> solver = new KolmogorovWeightedPerfectMatching<long, Pair<long, long>>(graph, ObjectiveSense.MAXIMIZE);
+            IMatching<long, Pair<long, long>> matching = solver.GetMatching();
+            if(!solver.TestOptimality())
+            {
+                throw new InvalidOperationException("TestOptimality is not true!");
+            }
+            
+            HashSet<Pair<long, long>> matchups = matching.GetEdges();
 
+            foreach (var pair in matchups)
+            {
+                TournamentPlayerData? first = activePlayers.Where<TournamentPlayerData>(p => p.id == pair.GetFirst()).FirstOrDefault();
+                TournamentPlayerData? second = activePlayers.Where<TournamentPlayerData>(p => p.id == pair.GetSecond()).FirstOrDefault();
 
-
-            return null;
+                if (first != null && second != null)
+                {
+                    result.Add(new Pair<TournamentPlayerData, TournamentPlayerData>(first, second));
+                }
+            }
+            
+            return result;
         }
 
-
-
-
-        private List<long> GetByeCandidates()
+        private static List<long> GetByeCandidates(List<TournamentPlayerData> activePlayers)
         {
             List<long> result = new List<long>();
 
@@ -53,6 +66,47 @@ namespace Tournament_Manager.Logic
             return result;
         }
 
+        private static IGraph<long, Pair<long, long>> ConstructGraph(List<TournamentPlayerData> activePlayers, List<long>? possibleByes, Func<TournamentPlayerData, TournamentPlayerData, double> weightFunction)
+        {
+            UndirectedSimpleGraph graph = new UndirectedSimpleGraph();
+            Dictionary<Pair<long, long>, double> weights = new Dictionary<Pair<long, long>, double>();
+
+            foreach (var player in activePlayers)
+            {
+                //Add player
+                if(!graph.AddVertex(player.id))
+                {
+                    throw new ArgumentException("Multiple players with same id are not allowed");
+                }
+
+                //Add edges to all other vertices and compute weight in dictionary
+                HashSet<long> alreadyAdded = graph.VertexSet();
+
+                foreach (long id in alreadyAdded)
+                {
+                    if (id != player.id)
+                    {
+                        graph.AddEdge(player.id, id);
+                        weights[new Pair<long, long>(player.id, id)] = weightFunction(player, activePlayers.Where<TournamentPlayerData>(p => p.id == id).First());
+                    }
+                }
+            }
+
+            //Add possible bye for all eligible players by adding a dummy vertice with same edge weights
+            if (possibleByes != null)
+            {
+                long bye = graph.AddVertex();
+
+                foreach (var id in possibleByes)
+                {
+                    graph.AddEdge(id, bye);
+                    weights[new Pair<long, long>(id, bye)] = 0;
+                }
+            }
+
+            //new graph with weighted edges
+            return new AsWeightedGraph<long, Pair<long, long>>(graph, weights); ;
+        }
 
     }
 }

@@ -12,7 +12,6 @@
   <ItemGroup>
     <Folder Include="Data\ImportData\" />
     <Folder Include="Data\ExportData\" />
-    <Folder Include="Logic\WeightFunctions\" />
   </ItemGroup>
 
 	<ItemGroup>
