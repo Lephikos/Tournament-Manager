@@ -10,24 +10,49 @@ namespace Tournament_Manager.Data
     internal class TournamentPlayerData
     {
 
+        /// <summary>
+        /// Player id
+        /// </summary>
         public long id;
 
+        /// <summary>
+        /// Points in the tournament (real points * 2 to avoid floating numbers)
+        /// </summary>
         public int points;
 
-        public List<long> opponents;
+        /// <summary>
+        /// Ids of the players the player has already played against as key and the result as value 
+        /// (1 = win with white, 2 = win with black, 0 = draw, -1 = loss with white, -2 = loss with black)
+        /// </summary>
+        public Dictionary<long, int> opponents;
 
+        /// <summary>
+        /// Tiebreak scores according to different tiebreak systems
+        /// </summary>
         public List<int> tiebreaks;
 
+        /// <summary>
+        /// ColorStreak > 0 => Streak with white, ColorStreak < 0 Streak with black
+        /// </summary>
         public int colorStreak;
 
+        /// <summary>
+        /// Sum of all white and black games, where white = 1 and black = -1
+        /// </summary>
         public int colorDiff;
 
-        public List<bool> gamedayColors;
+        /// <summary>
+        /// ColorDiff/Streak for each gameday
+        /// </summary>
+        public int gamedayColors;
 
+        /// <summary>
+        /// number of received byes
+        /// </summary>
         public int byes;
 
-        public TournamentPlayerData(long id, int points, List<long> opponents, List<int> tiebreaks, int colorStreak,
-            int colorDiff, List<bool> gamedayColors, int byes) 
+        public TournamentPlayerData(long id, int points, Dictionary<long, int> opponents, List<int> tiebreaks, int colorStreak,
+            int colorDiff, int gamedayColors, int byes) 
         {
             this.id = id;
             this.points = points;
@@ -55,7 +80,7 @@ namespace Tournament_Manager.Data
                 && tiebreaks.SequenceEqual(other.tiebreaks)
                 && colorStreak == other.colorStreak 
                 && colorDiff == other.colorDiff 
-                && gamedayColors.SequenceEqual(other.gamedayColors) 
+                && gamedayColors == other.gamedayColors
                 && byes == other.byes;
         }
 

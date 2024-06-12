@@ -15,10 +15,15 @@ namespace TournamentManagerTests.Logic
     public class PairingGeneratorTests
     {
 
+        private TournamentPlayerData[] playerData = new TournamentPlayerData[20];
+
         [TestInitialize]
         public void FillPlayerData()
         {
-
+            playerData = new TournamentPlayerData[1]
+            {
+                new TournamentPlayerData(1, 3, new Dictionary<long, int>() { {1L, 2 } }, new List<int>(), 0, 0, 1, 0),
+            };
         }
 
 
@@ -27,7 +32,7 @@ namespace TournamentManagerTests.Logic
         {
             List<TournamentPlayerData> players = new List<TournamentPlayerData>();
 
-            List<Pair<TournamentPlayerData, TournamentPlayerData>> matchups = PairingGenerator.GeneratePairings(players, (e, d) => 1.0);
+            List<Pair<TournamentPlayerData, TournamentPlayerData>> matchups = PairingGenerator.GeneratePairings(players, StandardRules.GetWeightFor);
 
             Assert.IsTrue(matchups.Count == 0);
         }
@@ -37,9 +42,9 @@ namespace TournamentManagerTests.Logic
         {
             List<TournamentPlayerData> players = new List<TournamentPlayerData>();
 
-            players.Add(new TournamentPlayerData(1, 0, new List<long>(), new List<int>(), 0, 0, new List<bool>(), 0));
+            players.Add(players[0]);
 
-            List<Pair<TournamentPlayerData, TournamentPlayerData>> matchups = PairingGenerator.GeneratePairings(players, (e, d) => 1.0);
+            List<Pair<TournamentPlayerData, TournamentPlayerData>> matchups = PairingGenerator.GeneratePairings(players, StandardRules.GetWeightFor);
 
             Assert.IsTrue(matchups.Count == 0);
         }
@@ -49,11 +54,11 @@ namespace TournamentManagerTests.Logic
         {
             List<TournamentPlayerData> players = new List<TournamentPlayerData>();
 
-            players.Add(new TournamentPlayerData(1, 0, new List<long>(), new List<int>(), 0, 0, new List<bool>(), 0));
-            players.Add(new TournamentPlayerData(2, 0, new List<long>(), new List<int>(), 0, 0, new List<bool>(), 0));
-            players.Add(new TournamentPlayerData(3, 0, new List<long>(), new List<int>(), 0, 0, new List<bool>(), 0));
+            //players.Add(new TournamentPlayerData(1, 0, new List<long>(), new List<int>(), 0, 0, 0, 0));
+            //players.Add(new TournamentPlayerData(2, 0, new List<long>(), new List<int>(), 0, 0, 0, 0));
+            //players.Add(new TournamentPlayerData(3, 0, new List<long>(), new List<int>(), 0, 0, 0, 0));
 
-            List<Pair<TournamentPlayerData, TournamentPlayerData>> matchups = PairingGenerator.GeneratePairings(players, (e, d) => 1.0);
+            List<Pair<TournamentPlayerData, TournamentPlayerData>> matchups = PairingGenerator.GeneratePairings(players, StandardRules.GetWeightFor);
 
             Assert.IsTrue(matchups.Count == 1);
         }
@@ -63,10 +68,10 @@ namespace TournamentManagerTests.Logic
         {
             List<TournamentPlayerData> players = new List<TournamentPlayerData>();
 
-            players.Add(new TournamentPlayerData(1, 0, new List<long>(), new List<int>(), 0, 0, new List<bool>() { true }, 0));
-            players.Add(new TournamentPlayerData(2, 0, new List<long>(), new List<int>(), 0, 0, new List<bool>() { true }, 0));
-            players.Add(new TournamentPlayerData(3, 0, new List<long>(), new List<int>(), 0, 0, new List<bool>() { false }, 0));
-            players.Add(new TournamentPlayerData(4, 0, new List<long>(), new List<int>(), 0, 0, new List<bool>() { false }, 0));
+            //players.Add(new TournamentPlayerData(1, 0, new List<long>(), new List<int>(), 0, 0, 1, 0));
+            //players.Add(new TournamentPlayerData(2, 0, new List<long>(), new List<int>(), 0, 0, 1, 0));
+            //players.Add(new TournamentPlayerData(3, 0, new List<long>(), new List<int>(), 0, 0, 0, 0));
+            //players.Add(new TournamentPlayerData(4, 0, new List<long>(), new List<int>(), 0, 0, 0, 0));
 
             List<Pair<TournamentPlayerData, TournamentPlayerData>> matchups = PairingGenerator.GeneratePairings(players, StandardRules.GetWeightFor);
 
