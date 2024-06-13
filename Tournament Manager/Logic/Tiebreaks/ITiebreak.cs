@@ -9,7 +9,7 @@ namespace Tournament_Manager.Logic.Tiebreaks
     internal interface ITiebreak
     {
 
-        internal int GetTiebreak()
+        internal int GetTiebreak();
 
     }
 }

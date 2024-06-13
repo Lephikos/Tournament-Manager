@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace Tournament_Manager.Data
 {
-    internal class Tournament
+    internal enum Result
     {
+        WHITE_WIN = 1,
+        BLACK_WIN = -2,
+        WHITE_LOSS = 2,
+        BLACK_LOSS = -1,
+        DRAW = 0
     }
 }

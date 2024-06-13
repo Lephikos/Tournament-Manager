@@ -19,23 +19,23 @@ namespace Tournament_Manager.Logic.WeightFunctions
             if ((firstPlayer.gamedayColors >= 0 && secondPlayer.gamedayColors <= 0) //tries to match players with different colors
                     || (firstPlayer.gamedayColors <= 0 && secondPlayer.gamedayColors >= 0))
             {
-                result += 50;
-                result *= 10;
+                result += 50;                
             }
+            result *= 10;
 
             //Rule 2: No same pairings
             if (!firstPlayer.opponents.ContainsKey(secondPlayer.id) && !secondPlayer.opponents.ContainsKey(firstPlayer.id))
             {
                 result += 50;
-                result *= 10;
             }
+            result *= 10;
 
             //Rule 3: ColorStreak must be less than 3 and colorDiff is not allowed to exceed 2
             if (IsValidColorMatching(firstPlayer, secondPlayer))
             {
                 result += 50;
-                result *= 10;
             }
+            result *= 10;
 
             //Rule 4: Match players with similar points
             result += 50 - (Math.Max(Math.Abs(firstPlayer.points - secondPlayer.points), 50));
@@ -46,10 +46,35 @@ namespace Tournament_Manager.Logic.WeightFunctions
             result *= 10;
 
             //Rule 6: Try to give favourite opponent according to swiss rule
-
+            result += GetGroupWeight(firstPlayer, secondPlayer);
 
 
             return result;
+        }
+
+        public static bool FirstIsWhite(TournamentPlayerData firstPlayer, TournamentPlayerData secondPlayer)
+        {
+            int firstPrio = GetColorPrio(firstPlayer);
+            int secondPrio = GetColorPrio(secondPlayer);
+
+            if (firstPrio >= 0 && secondPrio <= 0 && firstPrio != secondPrio) //First player wants white, second wants black
+            {
+                return true;
+            } else if (firstPrio <= 0 && secondPrio >= 0 && firstPrio != secondPrio) //First player wants black, second wants white
+            {
+                return false;
+            } else if (Math.Abs(firstPrio) > Math.Abs(secondPrio)) //Both want same color, but first player has higher prio
+            {
+                return firstPrio > 0;
+            } else if (Math.Abs(firstPrio) < Math.Abs(secondPrio)) //Both want same color, but second player has higher prio
+            {
+                return secondPrio < 0;
+            } else
+            {
+                Random random = new Random(); //Both same prio => choose random
+
+                return random.Next() % 2 == 1;
+            }
         }
 
         private static int GetColorPrio(TournamentPlayerData player)
@@ -120,6 +145,22 @@ namespace Tournament_Manager.Logic.WeightFunctions
 
             return (firstPrio == 3 && secondPrio == 3) || (firstPrio == -3 && secondPrio == -3);
         }
+
+        private static double GetGroupWeight(TournamentPlayerData firstPlayer, TournamentPlayerData secondPlayer)
+        {
+            double weight;
+            int sg = 0;
+
+            if (firstPlayer.activeScoregroup == secondPlayer.activeScoregroup)
+            {
+                sg = firstPlayer.activeScoregroupSize;
+            }
+
+            weight = -Math.Pow(Math.Abs((sg / 2) - Math.Abs(firstPlayer.activeRank - secondPlayer.activeRank)), 2);
+
+            return weight;
+        }
+
 
     }
 }

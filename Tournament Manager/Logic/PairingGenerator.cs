@@ -8,6 +8,7 @@ using Tournament_Manager.Logic.Graph;
 using Tournament_Manager.Logic.Matching;
 using Tournament_Manager.Logic.Matching.BlossomV;
 using Tournament_Manager.Logic.util;
+using Tournament_Manager.Logic.WeightFunctions;
 
 namespace Tournament_Manager.Logic
 {
@@ -24,6 +25,7 @@ namespace Tournament_Manager.Logic
             if (activePlayers.Count % 2 == 1)
             {
                 possibleByes = GetByeCandidates(activePlayers);
+                activePlayers.Add(new TournamentPlayerData(-1, 0, new Dictionary<long, List<Result>>(), new List<int>(), 0, 0, 0, 0)); //dummy player for bye
             }
 
             IGraph<long, Pair<long, long>> graph = ConstructGraph(activePlayers, possibleByes, weightFunction);
@@ -39,15 +41,19 @@ namespace Tournament_Manager.Logic
 
             foreach (var pair in matchups)
             {
-                TournamentPlayerData? first = activePlayers.Where<TournamentPlayerData>(p => p.id == pair.GetFirst()).FirstOrDefault();
-                TournamentPlayerData? second = activePlayers.Where<TournamentPlayerData>(p => p.id == pair.GetSecond()).FirstOrDefault();
+                TournamentPlayerData first = activePlayers.Where<TournamentPlayerData>(p => p.id == pair.GetFirst()).First();
+                TournamentPlayerData second = activePlayers.Where<TournamentPlayerData>(p => p.id == pair.GetSecond()).First();
 
-                if (first != null && second != null)
+                if (StandardRules.FirstIsWhite(first, second))
                 {
                     result.Add(new Pair<TournamentPlayerData, TournamentPlayerData>(first, second));
+                } else
+                {
+                    result.Add(new Pair<TournamentPlayerData, TournamentPlayerData>(second, first));
                 }
             }
-            
+            activePlayers.RemoveAll(p => p.id == -1); //remove dummy player for bye
+
             return result;
         }
 

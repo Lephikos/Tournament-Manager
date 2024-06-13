@@ -21,10 +21,9 @@ namespace Tournament_Manager.Data
         public int points;
 
         /// <summary>
-        /// Ids of the players the player has already played against as key and the result as value 
-        /// (1 = win with white, 2 = win with black, 0 = draw, -1 = loss with white, -2 = loss with black)
+        /// Ids of the players the player has already played against as key and the result
         /// </summary>
-        public Dictionary<long, int> opponents;
+        public Dictionary<long, List<Result>> opponents;
 
         /// <summary>
         /// Tiebreak scores according to different tiebreak systems
@@ -51,7 +50,14 @@ namespace Tournament_Manager.Data
         /// </summary>
         public int byes;
 
-        public TournamentPlayerData(long id, int points, Dictionary<long, int> opponents, List<int> tiebreaks, int colorStreak,
+        public int activeScoregroup = -1;
+
+        public int activeScoregroupSize = -1;
+
+        public int activeRank = -1;
+
+
+        public TournamentPlayerData(long id, int points, Dictionary<long, List<Result>> opponents, List<int> tiebreaks, int colorStreak,
             int colorDiff, int gamedayColors, int byes) 
         {
             this.id = id;
@@ -62,6 +68,15 @@ namespace Tournament_Manager.Data
             this.colorDiff = colorDiff;
             this.gamedayColors = gamedayColors;
             this.byes = byes;
+        }
+
+        public TournamentPlayerData(long id, int points, Dictionary<long, List<Result>> opponents, List<int> tiebreaks, int colorStreak,
+            int colorDiff, int gamedayColors, int byes, int scoregroup, int scoregroupSize, int rank) 
+            : this(id, points, opponents, tiebreaks, colorStreak, colorDiff, gamedayColors, byes)
+        {
+            this.activeScoregroup = scoregroup;
+            this.activeScoregroupSize = scoregroupSize;
+            this.activeRank = rank;
         }
 
 

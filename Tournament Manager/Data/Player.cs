@@ -19,13 +19,29 @@ namespace Tournament_Manager
         /// <summary>
         /// Player rating
         /// </summary>
-        public int dwz;
+        public int rating;
 
-        public Player(string name, int dwz)
+        public Player(string name, int rating)
         {
             this.name = name;
-            this.dwz = dwz;
+            this.rating = rating;
         }
 
+
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null || obj is not Player) return false;
+            if (obj == this) return true;
+
+            Player other = (Player)obj;
+
+            return this.guid.Equals(other.guid);
+        }
+
+        public override int GetHashCode()
+        {
+            return guid.GetHashCode();
+        }
     }
 }

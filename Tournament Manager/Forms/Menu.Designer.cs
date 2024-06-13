@@ -63,6 +63,7 @@
             BtnExit.TabIndex = 2;
             BtnExit.Text = "Beenden";
             BtnExit.UseVisualStyleBackColor = true;
+            BtnExit.Click += BtnExit_Click;
             // 
             // Menu
             // 

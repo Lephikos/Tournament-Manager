@@ -13,5 +13,10 @@ namespace Tournament_Manager
             createTournament.Show();
             this.Hide();
         }
+
+        private void BtnExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
