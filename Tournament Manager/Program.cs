@@ -1,3 +1,5 @@
+using Tournament_Manager.Forms;
+
 namespace Tournament_Manager
 {
     internal static class Program

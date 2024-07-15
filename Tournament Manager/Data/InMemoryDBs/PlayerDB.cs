@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tournament_Manager.Data.InMemoryDBs
 {
-    internal class PlayerDB
+	internal class PlayerDB
     {
 
         /// <summary>

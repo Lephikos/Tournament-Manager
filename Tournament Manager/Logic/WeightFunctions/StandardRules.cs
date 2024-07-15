@@ -38,7 +38,7 @@ namespace Tournament_Manager.Logic.WeightFunctions
             result *= 10;
 
             //Rule 4: Match players with similar points
-            result += 50 - (Math.Max(Math.Abs(firstPlayer.points - secondPlayer.points), 50));
+            result += 50 - Math.Max(Math.Pow(Math.Abs(firstPlayer.points - secondPlayer.points), 4), 50);
             result *= 10;
 
             //Rule 5: Try to give everyone the desired color
@@ -122,7 +122,7 @@ namespace Tournament_Manager.Logic.WeightFunctions
                 {
                     case 3: result = 40; break; //Prio 1 and 2 -> Not that bad
                     case 4: result = 25; break; //Prio 1 and 3 -> ok
-                    case 5: result = 10; break; //Prio 2 and 3 -> Bad, because next roudn there is another prio 3
+                    case 5: result = 10; break; //Prio 2 and 3 -> Bad, because next round there is another prio 3
                     default: result = 50; break; //Shouldn't happen
                 }
 
@@ -156,7 +156,7 @@ namespace Tournament_Manager.Logic.WeightFunctions
                 sg = firstPlayer.activeScoregroupSize;
             }
 
-            weight = -Math.Pow(Math.Abs((sg / 2) - Math.Abs(firstPlayer.activeRank - secondPlayer.activeRank)), 2);
+            weight = - Math.Pow(Math.Abs((sg / 2) - Math.Abs(firstPlayer.activeRank - secondPlayer.activeRank)), 2);
 
             return weight;
         }

@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace Tournament_Manager.Logic.Tiebreaks
 {
-    internal class SBB
-    {
-    }
+	public enum Tiebreaks
+	{
+		BHZ,
+		DIRECT_COMPARISON,
+		MOST_WINS,
+		RANDOM,
+		RATING,
+		SBB,
+		MATCH_COUNT
+	}
 }

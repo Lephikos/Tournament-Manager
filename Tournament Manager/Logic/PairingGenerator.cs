@@ -63,7 +63,7 @@ namespace Tournament_Manager.Logic
 
             activePlayers.ForEach(p =>
             {
-                if (p.byes == 0 || p.byes < activePlayers.ConvertAll(p => p.byes).Max())
+                if (p.byes == 0 || !activePlayers.Any(q => q.byes != p.byes) || p.byes < activePlayers.ConvertAll(p => p.byes).Max())
                 {
                     result.Add(p.id);
                 }
@@ -85,33 +85,34 @@ namespace Tournament_Manager.Logic
                     throw new ArgumentException("Multiple players with same id are not allowed");
                 }
 
-                //Add edges to all other vertices and compute weight in dictionary
-                HashSet<long> alreadyAdded = graph.VertexSet();
+				//Add edges to all other vertices and compute weight in dictionary
+				HashSet<long> alreadyAdded = graph.VertexSet();
 
                 foreach (long id in alreadyAdded)
                 {
                     if (id != player.id)
                     {
-                        graph.AddEdge(player.id, id);
-                        weights[new Pair<long, long>(player.id, id)] = weightFunction(player, activePlayers.Where<TournamentPlayerData>(p => p.id == id).First());
+						if (player.id != -1)
+                        {
+							graph.AddEdge(player.id, id);
+                            weights[new Pair<long, long>(player.id, id)] =
+                                weightFunction(player, activePlayers.Where<TournamentPlayerData>(p => p.id == id).First());
+                        }
+                        else
+                        {
+                            foreach (long v in possibleByes!)
+                            {
+								graph.AddEdge(v, player.id);
+                                weights[new Pair<long, long>(v, player.id)] = 0;
+							}
+                        }
                     }
                 }
             }
 
-            //Add possible bye for all eligible players by adding a dummy vertice with same edge weights
-            if (possibleByes != null)
-            {
-                long bye = graph.AddVertex();
-
-                foreach (var id in possibleByes)
-                {
-                    graph.AddEdge(id, bye);
-                    weights[new Pair<long, long>(id, bye)] = 0;
-                }
-            }
 
             //new graph with weighted edges
-            return new AsWeightedGraph<long, Pair<long, long>>(graph, weights); ;
+            return new AsWeightedGraph<long, Pair<long, long>>(graph, weights);
         }
 
     }
